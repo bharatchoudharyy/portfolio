@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+	--color-background: #08080a;
+	--color-surface: #0e0e10;
+	--color-surface-elev: #141417;
+	--color-border: rgb(255 255 255 / 0.08);
+	--color-border-strong: rgb(255 255 255 / 0.14);
+
+	--color-text: #fafafa;
+	--color-text-muted: #a3a3a3;
+	--color-text-faint: #6b6b70;
+
+	--color-accent: #a3e635;
+	--color-accent-soft: rgb(163 230 53 / 0.14);
+	--color-accent-glow: rgb(163 230 53 / 0.22);
+
+	--font-sans: var(--font-geist-sans);
+	--font-mono: var(--font-geist-mono);
+
+	--radius-card: 14px;
+
+	--ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+	color-scheme: dark;
+}
+
+html,
+body {
+	background: var(--color-background);
+	color: var(--color-text);
+	font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+	font-feature-settings: "ss01" on, "cv11" on;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+body {
+	min-height: 100dvh;
+	overflow-x: hidden;
+}
+
+html {
+	scroll-behavior: smooth;
+	scroll-padding-top: 80px;
+}
+
+::selection {
+	background: var(--color-accent);
+	color: #08080a;
+}
+
+:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 3px;
+	border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+@keyframes twinkle {
+	0%,
+	100% {
+		opacity: var(--twinkle-min, 0.2);
+	}
+	50% {
+		opacity: var(--twinkle-max, 0.9);
+	}
+}
+
+.link {
+	position: relative;
+	color: var(--color-text);
+	transition: color 200ms var(--ease-out-soft);
+}
+
+.link::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -2px;
+	height: 1px;
+	background: currentColor;
+	opacity: 0.25;
+	transition: opacity 200ms var(--ease-out-soft), background 200ms var(--ease-out-soft);
+}
+
+.link:hover {
+	color: var(--color-accent);
+}
+
+.link:hover::after {
+	opacity: 1;
+	background: var(--color-accent);
+}
+
+.tag {
+	font-family: var(--font-mono), ui-monospace, monospace;
+	font-size: 10px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--color-text-faint);
+}
