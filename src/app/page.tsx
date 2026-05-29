@@ -9,7 +9,7 @@ import { Into } from "@/components/into";
 import { Contact } from "@/components/contact";
 import { Reveal } from "@/components/reveal";
 
-export const revalidate = 600;
+export const revalidate = 60;
 
 export default function Home() {
 	return (

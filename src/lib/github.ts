@@ -1,7 +1,9 @@
-// Live GitHub data for the hero NOW widget. Cached 10 min via Next fetch.
+// Live GitHub data for the hero NOW widget. Cached 60s via Next fetch.
 //
 // Needs GITHUB_TOKEN in env (classic PAT: repo + read:user, with the profile
 // setting "Include private contributions on my profile" enabled).
+
+import { relativeTime } from "./relative-time";
 
 const FALLBACK_USERNAME = "bharatchoudharyy";
 
@@ -15,7 +17,8 @@ export type LiveStatus = {
 	lastPush: {
 		repo: string;
 		isPrivate: boolean;
-		relative: string;
+		when: string; // ISO — client recomputes relative time from this
+		relative: string; // server-computed, used as SSR fallback
 		url: string;
 		message: string | null;
 		commitUrl: string | null;
@@ -89,23 +92,6 @@ type Repo = {
 	} | null;
 };
 
-function relativeTime(iso: string): string {
-	const diff = Math.max(0, Date.now() - new Date(iso).getTime());
-	const mins = Math.floor(diff / 60_000);
-	if (mins < 1) return "just now";
-	if (mins < 60) return `${mins}m ago`;
-	const hours = Math.floor(mins / 60);
-	if (hours < 24) return `${hours}h ago`;
-	const days = Math.floor(hours / 24);
-	if (days === 1) return "yesterday";
-	if (days < 7) return `${days}d ago`;
-	const weeks = Math.floor(days / 7);
-	if (weeks < 5) return `${weeks}w ago`;
-	const months = Math.floor(days / 30);
-	if (months < 12) return `${months}mo ago`;
-	return `${Math.floor(days / 365)}y ago`;
-}
-
 export async function getLiveStatus(): Promise<LiveStatus> {
 	const token = process.env.GITHUB_TOKEN;
 	if (!token) return DOWN;
@@ -118,7 +104,7 @@ export async function getLiveStatus(): Promise<LiveStatus> {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({ query: QUERY }),
-			next: { revalidate: 600 },
+			next: { revalidate: 60 },
 		});
 		if (!res.ok) return DOWN;
 
@@ -151,6 +137,7 @@ export async function getLiveStatus(): Promise<LiveStatus> {
 			lastPush = {
 				repo: best.repo.name,
 				isPrivate: best.repo.isPrivate,
+				when: best.commit.committedDate,
 				relative: relativeTime(best.commit.committedDate),
 				url: best.repo.url,
 				message: best.commit.message.split("\n")[0],
@@ -160,6 +147,7 @@ export async function getLiveStatus(): Promise<LiveStatus> {
 			lastPush = {
 				repo: repos[0].name,
 				isPrivate: repos[0].isPrivate,
+				when: repos[0].pushedAt,
 				relative: relativeTime(repos[0].pushedAt),
 				url: repos[0].url,
 				message: null,
