@@ -1,6 +1,5 @@
 import type { LiveStatus } from "@/lib/github";
 import { ExternalLink, Lock } from "lucide-react";
-import { RelativeTime } from "./relative-time";
 
 export function NowWidget({ status }: { status: LiveStatus }) {
 	return (
@@ -85,9 +84,7 @@ function LiveView({ status }: { status: LiveStatus }) {
 						push ? (
 							push.isPrivate ? (
 								<span className="inline-flex items-center gap-1.5">
-									<span className="text-[color:var(--color-text)]">
-										<RelativeTime iso={push.when} initial={push.relative} />
-									</span>
+									<span className="text-[color:var(--color-text)]">{push.relative}</span>
 									<span className="text-[color:var(--color-text-faint)]">·</span>
 									<span className="inline-flex items-center gap-1 text-[color:var(--color-text-muted)]">
 										<Lock
@@ -105,9 +102,7 @@ function LiveView({ status }: { status: LiveStatus }) {
 									rel="noreferrer noopener"
 									className="link inline-flex items-center gap-1.5"
 								>
-									<span className="text-[color:var(--color-text)]">
-										<RelativeTime iso={push.when} initial={push.relative} />
-									</span>
+									<span className="text-[color:var(--color-text)]">{push.relative}</span>
 									<span className="text-[color:var(--color-text-faint)]">·</span>
 									<span className="text-[color:var(--color-text-muted)]">{push.repo}</span>
 									<ExternalLink size={11} className="opacity-50" />
